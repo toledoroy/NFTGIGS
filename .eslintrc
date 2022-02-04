@@ -11,7 +11,6 @@
     "jest": true
   },
   "extends": [
-    "eslint:recommended",
     "plugin:react/jsx-runtime",
     "plugin:react/recommended",
     "plugin:prettier/recommended",
@@ -24,11 +23,19 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": [
+    "react"
+  ],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/jsx-key": "off",
-    "react/no-unescaped-entities": "off"
+    "react/no-unescaped-entities": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   }
 }
