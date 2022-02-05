@@ -8,14 +8,14 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 /**
  * This is a simple Offer Contract
  * Used to manage the sale lifecycle
- * Version 0.1
+ * Version 0.1.3
  */
 // contract Offers is ERC1155 {
 contract Offers is ERC1155Supply {
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;     //Track Last Token ID 
-    
+
     mapping(uint256 => string) private _tokenURIs;      // Mapping for token URIs
 
     mapping(uint256 => mapping(address => uint256)) private _balances;			// Mapping from token ID to account balances
@@ -49,7 +49,14 @@ contract Offers is ERC1155Supply {
     string public name = 'Offers';
     // Contract symbol
     string public symbol = 'OFFER';
+    // Deployer
+    address private _owner;
 
+    constructor() ERC1155('') {
+        //Remember Deployer
+        _owner = msg.sender;
+        // _mint(msg.sender, 0, 10**18, "");
+    }
 
     //-- Modifiers
 
@@ -103,16 +110,6 @@ contract Offers is ERC1155Supply {
     // mapping(uint256 => string) private _tokenURIs;   // Mapping for token URIs (Taken From ERC721)
 
 
-    // _orders[token_id][account]
-
-
-    constructor() ERC1155('') {
-        // make(11, 'GOLD', "");
-        // _mint(msg.sender, 0, 10**18, "");
-
-    }
-
-
     /**
      * @dev Hook that is called before any token transfer. This includes minting
      * and burning, as well as batched variants.
@@ -147,14 +144,20 @@ contract Offers is ERC1155Supply {
     //-- Getters
     
     /**
+	 * Expose Contract Owner
+	 */
+    function owner() public view returns (address) {
+        return _owner;
+    }
+
+    /**
      * Get Available (Unused) Balance (Credit)
      */
     function creditOf(address account, uint256 token_id) public view returns (uint256) {
         require (account != address(0), "credit query for the zero address");
         require (exists(token_id), "NONEXISTENT_TOKEN");
-        
-        // return ( _balances[token_id][account] - _used[token_id][account] );  //
-        return ( balanceOf(account, token_id) - _used[token_id][account] );
+        // return ( balanceOf(account, token_id) - _used[token_id][account] );
+        return ( balanceOf(account, token_id) - usedBalanceOf(account, token_id) );
     }
     // function credit(uint256 token_id) public view returns (uint256) {
     //     return creditOf(_msgSender(), token_id);
@@ -209,24 +212,15 @@ contract Offers is ERC1155Supply {
         return _orders[token_id][order_id].status;
     }
     
-
     /**
      * Check if Order Exists by Checking Requesting Account's Address
      */
     function existsOrder(uint256 token_id, uint256 order_id) public view returns (bool) {
         return(exists(token_id) && _orders[token_id][order_id].account != address(0));
     }
-    //-- Testing
 
-    /** Inherit exist() from ERC1155Supply 
-    * @dev Returns whether the specified token exists by checking to see if it has a creator
-    * @param token_id uint256 ID of the token to query the existence of
-    * @return bool whether the token exists
-    */
-    // function _exists(uint256 token_id) internal view returns (bool) {
-    //     return _creators[token_id] != address(0);
-    // }
-    
+    //-- Actions    
+
     /**
      * @dev Make a New Offer
      */
@@ -311,8 +305,6 @@ contract Offers is ERC1155Supply {
         //Event W/URI
         emit _order(token_id, order_id, msg.sender, request_uri);
     }
-
-    //-- DEV
 
     /**
      * Deliver Order
