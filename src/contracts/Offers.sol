@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 /**
  * This is a simple Offer Contract
  * Used to manage the sale lifecycle
- * Version 0.1.3
+ * Version 0.1.4
  */
 // contract Offers is ERC1155 {
 contract Offers is ERC1155Supply {
@@ -42,8 +42,8 @@ contract Offers is ERC1155Supply {
     mapping(uint256 => uint256) private _orderCount;   
     mapping(uint256 => uint256) private _prices;     // Token Prices
     mapping(uint256 => uint256) private _deposits;   // Pending Payments (Escrow)
-    mapping (uint256 => address) public _creators;
-    mapping (uint256 => uint256) public _maxSupply;
+    mapping(uint256 => address) public _creators;
+    mapping(uint256 => uint256) public _maxSupply;
     //  mapping(uint256 => uint256) private _totalSupply;   //Inherit From ERC1155Supply
     // Contract name
     string public name = 'Offers';
@@ -60,22 +60,24 @@ contract Offers is ERC1155Supply {
 
     //-- Modifiers
 
-    /**
+    /** UNNECESSARY
     * @dev Require msg.sender to be the creator of the token id
-    */
+    
     modifier creatorOnly(uint256 _id) {
-        require(_creators[_id] == msg.sender, "Only Creators Can Call This Function");
+        require(_creators[_id] == msg.sender, "CREATOR_ONLY");
         _;
     }
-
-    /**
-    * @dev Require msg.sender to own more than 0 of the token id
     */
-    // modifier ownersOnly(uint256 _id) {
-    //     require(balances[msg.sender][_id] > 0, "ERC1155Tradable#ownersOnly: ONLY_OWNERS_ALLOWED");
-    //     _;
-    // }
 
+    /** UNUSED
+    * @dev Require msg.sender to own more than 0 of the token id
+    
+    modifier ownersOnly(uint256 _id) {
+        require(balances[msg.sender][_id] > 0, "OWNER_ONLY");
+        // require(balances[msg.sender][_id] > 0, "ERC1155Tradable#ownersOnly: ONLY_OWNERS_ALLOWED");
+        _;
+    }
+    */
     
     //-- Events
     /**
@@ -109,26 +111,9 @@ contract Offers is ERC1155Supply {
 
     // mapping(uint256 => string) private _tokenURIs;   // Mapping for token URIs (Taken From ERC721)
 
-
     /**
      * @dev Hook that is called before any token transfer. This includes minting
      * and burning, as well as batched variants.
-     *
-     * The same hook is called on both single and batched variants. For single
-     * transfers, the length of the `id` and `amount` arrays will be 1.
-     *
-     * Calling conditions (for each `id` and `amount` pair):
-     *
-     * - When `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * of token type `id` will be  transferred to `to`.
-     * - When `from` is zero, `amount` tokens of token type `id` will be minted
-     * for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens of token type `id`
-     * will be burned.
-     * - `from` and `to` are never both zero.
-     * - `ids` and `amounts` have the same, non-zero length.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(
         address operator,
@@ -139,6 +124,17 @@ contract Offers is ERC1155Supply {
         bytes memory data
         ) internal virtual override {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+
+        if (from != address(0)) {
+            for (uint256 i = 0; i < ids.length; ++i) {
+                uint256 id = ids[i];
+                uint256 amount = amounts[i];
+                uint256 credit = creditOf(from, id);
+                //Check for Sufficient Credit
+                require(credit >= amount, "INSUFFICIENT_CREDIT");
+            }
+        }
+
     }
 
     //-- Getters
@@ -154,7 +150,7 @@ contract Offers is ERC1155Supply {
      * Get Available (Unused) Balance (Credit)
      */
     function creditOf(address account, uint256 token_id) public view returns (uint256) {
-        require (account != address(0), "credit query for the zero address");
+        require (account != address(0), "INVALID_ADDRESS");
         require (exists(token_id), "NONEXISTENT_TOKEN");
         // return ( balanceOf(account, token_id) - _used[token_id][account] );
         return ( balanceOf(account, token_id) - usedBalanceOf(account, token_id) );
