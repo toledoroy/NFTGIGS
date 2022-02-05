@@ -23,6 +23,7 @@ import QuickStart from "components/QuickStart";
 import Contract from "components/Contract/Contract";
 import Text from "antd/lib/typography/Text";
 import Ramper from "components/Ramper";
+import Offers from "components/Offer/Offers";
 import MenuItems from "./components/MenuItems";
 const { Header, Footer } = Layout;
 
@@ -115,6 +116,9 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/erc20transfers">
               <ERC20Transfers />
+            </Route>
+            <Route path="/offers">
+              <Offers />
             </Route>
             <Route path="/nftBalance">
               <NFTBalance />
