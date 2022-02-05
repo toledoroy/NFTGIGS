@@ -10,8 +10,8 @@ import { useIPFS } from "./useIPFS";
 
 /**
  * DEPRECATED
- * @param {*} props 
- * @returns 
+ * @param {*} props
+ * @returns
  */
 export const useOffers = (props) => {
   const { account } = useMoralisWeb3Api();
@@ -77,8 +77,8 @@ export const useOffers = (props) => {
     //Polygon Offers
     fetch(
       "https://api.nftport.xyz/v0/nfts/" +
-      contractHash +
-      "?chain=polygon&include=metadata",
+        contractHash +
+        "?chain=polygon&include=metadata",
       {
         method: "GET",
         headers: {
@@ -163,7 +163,7 @@ export const useOffers = (props) => {
             if (!response?.result)
               throw new Error(
                 "Moralis NFT For Contract Request Returned Invalid Data: " +
-                Json.stringify(response),
+                  Json.stringify(response),
               );
 
             //Set NFTs
