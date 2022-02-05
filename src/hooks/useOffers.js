@@ -8,6 +8,11 @@ import {
 import { useIPFS } from "./useIPFS";
 // const axios = require("axios").default;
 
+/**
+ * DEPRECATED
+ * @param {*} props 
+ * @returns 
+ */
 export const useOffers = (props) => {
   const { account } = useMoralisWeb3Api();
   // const { walletAddress } = useMoralis();
@@ -45,7 +50,6 @@ export const useOffers = (props) => {
       /* Moralis NFT API */
       return offersGetMoralis(contractHash, chain);
 
-
       /* WORKS FINE
     let guestOptions = {chain: chainId, address: '0x9e87f6bd0964300d2bde778b0a6444217d09f3c1'};
     account.getNFTs(guestOptions).then((data) => {
@@ -65,14 +69,16 @@ export const useOffers = (props) => {
   );
 
   /**
-   * Fetch NFTs viaCOVALENT NFT API 
+   * Fetch NFTs viaCOVALENT NFT API
    *    - No Support for Mumbai...
    */
   async function offersGetNFTPort() {
     const contractHash = "0xe93a85fc751513b99feead66a9d29a83a8704c71"; //Something on Polygon
     //Polygon Offers
     fetch(
-      "https://api.nftport.xyz/v0/nfts/" + contractHash + "?chain=polygon&include=metadata",
+      "https://api.nftport.xyz/v0/nfts/" +
+      contractHash +
+      "?chain=polygon&include=metadata",
       {
         method: "GET",
         headers: {
@@ -94,7 +100,6 @@ export const useOffers = (props) => {
         //Has Error
         setError(err);
       });
-
   }
   /**
    * Fetch NFTs viaCOVALENT NFT API
@@ -133,7 +138,7 @@ export const useOffers = (props) => {
         setError(err);
       });
     // console.warn("[TEST] covalenthq Contract's NFTs:", res);
-  };
+  }
 
   /**
    * Trigger Moralis Metadata Update When Needed
