@@ -4,15 +4,20 @@
 // import { Link } from "react-router-dom";
 // import { useOffers } from "hooks/useOffers";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useMoralis, useNFTBalances } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Input, Skeleton } from "antd";
-import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined, } from "@ant-design/icons";
+import {
+  FileSearchOutlined,
+  SendOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 // import { getExplorer } from "helpers/networks";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { useIPFS } from "hooks/useIPFS";
 // import AddressInput from "components/AddressInput";
 import NFTDisplaySingle from "components/NFT/NFTDisplaySingle";
+import { OfferContractContext } from "context/context";
 
 const { Meta } = Card;
 
@@ -30,16 +35,16 @@ const styles = {
 };
 
 /**
- * Offer(s) Page
+ * Offers (All) Page
  *
  * TODO:
- *
- * Create an Offer
- * Buy an Offer
- * Request Offer
- * Deliver Offer
- * Approve Offer
- *
+ * - All Offers
+ * - Single Offer
+ * - Create an Offer
+ * - Buy an Offer
+ * - Order an Offer
+ * - Deliver Offer
+ * - Approve & Review anOffer
  */
 function Offers(props) {
   // const { tokens, isLoading, error } = useOffers();
@@ -47,41 +52,25 @@ function Offers(props) {
   const [tokens, setTokens] = useState([]);
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState();
-
+  const { contractData } = useContext(OfferContractContext);
   const { verifyMetadata } = useVerifyMetadata();
 
   useEffect(() => {
     //Before
     setIsLoading(true);
     setError();
-    // console.warn("(i) Offers() Loading Offers...");  
+    // console.warn("(i) Offers() Loading Offers...");
 
-    //Offers v.0.1.3 on Mumbai
-    // const contract = {
-    //   chain: "mumbai",
-    //   hash: "0x46e5BAbAd693DBb352002652f660508c65515969", 
-    // };
-    //TEST CONTRACT
-    const contract = {
-      //Something on Polygon
-      chain: "polygon",
-      hash: "0xe93a85fc751513b99feead66a9d29a83a8704c71",
-    };
-
-    /* Moralis NFT API */
-    offersGetMoralis(contract.hash, contract.chain);
+    //Load Offers
+    offersGetMoralis(contractData.hash, contractData.chain);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [props]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },
-    [],
-  );
+  }, []);
 
   /**
-   * Trigger Moralis Metadata Update When Needed
+   * Fetch all Contract's Offers via Moralis NFT API
    */
-  async function offersGetMoralis(hash, chain = "mumbai") {
+  async function offersGetMoralis(hash, chain) {
     let apiKey = process?.env?.REACT_APP_MORALIS_API_KEY;
     if (apiKey) {
       if (hash && chain) {
@@ -101,7 +90,7 @@ function Offers(props) {
             if (!response?.result)
               throw new Error(
                 "Moralis NFT For Contract Request Returned Invalid Data: " +
-                Json.stringify(response),
+                  Json.stringify(response),
               );
 
             //Set NFTs
@@ -110,19 +99,21 @@ function Offers(props) {
             setIsLoading(false);
           })
           .catch((err) => {
-            console.error(
-              "Offers.offersGetMoralis() Moralis API Error:",
-              err,
-            );
+            console.error("Offers.offersGetMoralis() Moralis API Error:", err);
             //Done Loading
             setIsLoading(false);
             //Has Error
             setError(err);
           });
       } else
-        console.error("Offers.offersGetMoralis() Missing Parameters", { hash, chain, });
+        console.error("Offers.offersGetMoralis() Missing Parameters", {
+          hash,
+          chain,
+        });
     } else
-      console.error("Offers.offersGetMoralis() Can't Run. API Key Missing in ENV");
+      console.error(
+        "Offers.offersGetMoralis() Can't Run. API Key Missing in ENV",
+      );
   } //offersGetMoralis()
 
   /**
