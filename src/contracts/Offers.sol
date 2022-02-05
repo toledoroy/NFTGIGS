@@ -163,7 +163,7 @@ contract Offers is ERC1155Supply {
      * Balance Used
      */
     function usedBalanceOf(address account, uint256 token_id) public view returns (uint256) {
-        require(account != address(0), "ERC1155: balance query for the zero address");
+        require(account != address(0), "INVALID_ADDRESS");
         return _used[token_id][account];
     }
 
