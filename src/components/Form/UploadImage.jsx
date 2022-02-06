@@ -86,7 +86,16 @@ function UploadImage(props) {
     }; //handleChangeFile()
 
     return (
-        <div className="upload_container" style={{ textAlign: 'center', margin: 'auto', maxHeight: size, maxWidth: size, cursor: 'pointer' }}>
+        <div
+            className="upload_container"
+            style={{
+                textAlign: "center",
+                margin: "auto",
+                maxHeight: size,
+                maxWidth: size,
+                cursor: "pointer",
+            }}
+        >
             <Upload
                 name="image"
                 className="image-uploader"
@@ -106,7 +115,7 @@ function UploadImage(props) {
                 ) : (
                     ""
                 )}
-                <div className="upload_icons" style={{ fontSize: '2em' }}>
+                <div className="upload_icons" style={{ fontSize: "2em" }}>
                     <CameraFilled /> Upload Image
                     {/* <UploadOutlined /> */}
                 </div>

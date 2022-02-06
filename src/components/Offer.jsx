@@ -128,7 +128,9 @@ function Offer(props) {
      * @ret void
      */
     const onFinish = async (values) => {
-        console.warn("[TEST] Offer.onFinish() Values ", { values });
+
+        // console.warn("[TEST] Offer.onFinish() Values ", { values }); //V
+
         //Request Data
         let data = {};
         // _.each(formFields)
@@ -156,19 +158,14 @@ function Offer(props) {
                 if (!data.metadata) data.metadata = {};
                 //Append to Metadata  (Treat as Optinal Values)
                 if (values[key]) data.metadata[key] = values[key];
-                //Log
-                console.warn("[TEST] Offer.onFinish() Form Field:", {
-                    key,
-                    value: values[key],
-                });
             } else data[key] = values[key];
 
         } //Each Expected Item
 
-        console.warn("[TEST] Offer.onFinish() Ready to Submit Data:", data);
+        // console.warn("[TEST] Offer.onFinish() Ready to Submit Data:", data);
 
+        //Start Saving
         setisSaving(true);
-
         //Run Action
         let result = await pages[curPage]
             .submit(data)
@@ -182,10 +179,11 @@ function Offer(props) {
                 message.error("Ooops, Something went wrong", 20);
                 // setisSaving(false);
             });
-
-        console.warn("[TEST] Offer.onFinish() (OUT) Result:", result); //V
         //Done Saving
         setisSaving(false);
+
+        // console.warn("[TEST] Offer.onFinish() (OUT) Result:", result); //V
+
     }; //onFinish()
 
     //Validate Requested Page
