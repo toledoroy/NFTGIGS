@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useLocation } from "react-router";
 import { Menu } from "antd";
 import { NavLink } from "react-router-dom";
@@ -39,9 +40,14 @@ function MenuItems() {
       <Menu.Item key="/nftBalance">
         <NavLink to="/nftBalance">NFTs</NavLink>
       </Menu.Item>
+
       <Menu.Item key="/offers">
         <NavLink to="/offers">Offers</NavLink>
       </Menu.Item>
+      <Menu.Item key="/offerAdd">
+        <NavLink to="/offer/sell">New Offer</NavLink>
+      </Menu.Item>
+
       <Menu.Item key="/contract">
         <NavLink to="/contract">📄 Contract</NavLink>
       </Menu.Item>

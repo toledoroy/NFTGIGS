@@ -24,6 +24,7 @@ import QuickStart from "components/QuickStart";
 import Contract from "components/Contract/Contract";
 import Text from "antd/lib/typography/Text";
 import Ramper from "components/Ramper";
+import Offer from "components/Offer";
 import Offers from "components/Offer/Offers";
 import MenuItems from "./components/MenuItems";
 import { OfferContractContext } from "context/context";
@@ -136,9 +137,10 @@ const App = ({ isServerInfo }) => {
               <Route path="/erc20transfers">
                 <ERC20Transfers />
               </Route>
-              <Route path="/offers">
-                <Offers />
-              </Route>
+
+              <Route path="/offers" component={Offers} />
+              <Route path="/offer/:action" component={Offer} />
+
               <Route path="/nftBalance">
                 <NFTBalance />
               </Route>
