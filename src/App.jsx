@@ -74,18 +74,18 @@ const App = ({ isServerInfo }) => {
   // Offers Contract
 
   //Offers v.0.1.3 on Mumbai
-  // const contractData = {
-  //   chain: "mumbai",
-  //   hash: "0x46e5BAbAd693DBb352002652f660508c65515969",
-  // abi: require('contracts/abi/Offers.json'),
-  // };
-  //TEST CONTRACT
   const contractData = {
-    //Something on Polygon
-    chain: "polygon",
-    hash: "0xe93a85fc751513b99feead66a9d29a83a8704c71",
+    chain: "mumbai",
+    hash: "0x9DB046C958D1C6B2eA3B307C7FE05e3d3568ca2c",
+    abi: require('contracts/abi/Offers.json'),
   };
-  contractData.abi = require("contracts/abi/Offers.json");
+  //TEST CONTRACT
+  // const contractData = {
+  //   //Something on Polygon
+  //   chain: "polygon",
+  //   hash: "0xe93a85fc751513b99feead66a9d29a83a8704c71",
+  //   abi: require('contracts/abi/Offers.json'),
+  // };
 
   return (
     <OfferContractContext.Provider value={{ contractData }}>

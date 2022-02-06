@@ -655,7 +655,7 @@
       },
       {
         "internalType": "string",
-        "name": "uri",
+        "name": "token_uri",
         "type": "string"
       }
     ],
@@ -805,25 +805,6 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "token_id",
-        "type": "uint256"
-      }
-    ],
-    "name": "tokenURI",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "id",
         "type": "uint256"
       }
@@ -843,7 +824,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "token_id",
         "type": "uint256"
       }
     ],

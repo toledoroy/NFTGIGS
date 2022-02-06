@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 /**
  * This is a simple Offer Contract
  * Used to manage the sale lifecycle
- * Version 0.1.4
+ * Version 0.2.0
  */
 // contract Offers is ERC1155 {
 contract Offers is ERC1155Supply {
@@ -170,11 +170,14 @@ contract Offers is ERC1155Supply {
     /**
      * Get Token URI
      */
-    function tokenURI(uint256 token_id) public view returns (string memory) {
+    // function tokenURI(uint256 token_id) public view returns (string memory) {
+    //     require(exists(token_id), "NONEXISTENT_TOKEN");
+    //     return _tokenURIs[token_id];
+    // }
+    function uri(uint256 token_id) public view override returns (string memory) {
         require(exists(token_id), "NONEXISTENT_TOKEN");
         return _tokenURIs[token_id];
     }
-
     /**
      * Get Token Price
      */
@@ -220,7 +223,7 @@ contract Offers is ERC1155Supply {
     /**
      * @dev Make a New Offer
      */
-    function sell(uint256 token_price, uint256 max_supply, string memory uri) public returns (uint256) {
+    function sell(uint256 token_price, uint256 max_supply, string memory token_uri) public returns (uint256) {
         address maker = msg.sender; //? Should I Support Contracts as Makers? 
         // address maker = _msgSender();
         //Increment Token ID
@@ -238,7 +241,7 @@ contract Offers is ERC1155Supply {
         //Set Token Max-Supply
         _maxSupply[token_id] = max_supply;
         //Set Token URI
-        _tokenURIs[token_id] = uri;
+        _tokenURIs[token_id] = token_uri;
         //Set Token Price
         _prices[token_id] = token_price;
         
@@ -246,8 +249,8 @@ contract Offers is ERC1155Supply {
         _creators[token_id] = maker;
 
         //Event: Token URI
-        if (bytes(uri).length > 0) {
-            emit URI(uri, token_id);
+        if (bytes(token_uri).length > 0) {
+            emit URI(token_uri, token_id);
         }
 
         return token_id;
