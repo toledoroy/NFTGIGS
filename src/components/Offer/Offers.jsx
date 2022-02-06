@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-
 // import { Result, Button } from 'antd';
 // import { Link } from "react-router-dom";
 // import { useOffers } from "hooks/useOffers";
@@ -7,17 +6,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useMoralis, useNFTBalances } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Input, Skeleton } from "antd";
-import {
-  FileSearchOutlined,
-  SendOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
+import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 // import { getExplorer } from "helpers/networks";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { useIPFS } from "hooks/useIPFS";
 // import AddressInput from "components/AddressInput";
-import NFTDisplaySingle from "components/NFT/NFTDisplaySingle";
+import OfferDisplaySingle from "components/NFT/OfferDisplaySingle";
 import { OfferContractContext } from "context/context";
+
+// **** DEPRECATED ** \\
 
 const { Meta } = Card;
 
@@ -47,7 +44,6 @@ const styles = {
  * - Approve & Review anOffer
  */
 function Offers(props) {
-  // const { tokens, isLoading, error } = useOffers();
   const { resolveLink } = useIPFS();
   const [tokens, setTokens] = useState([]);
   const [error, setError] = useState();
@@ -90,7 +86,7 @@ function Offers(props) {
             if (!response?.result)
               throw new Error(
                 "Moralis NFT For Contract Request Returned Invalid Data: " +
-                  Json.stringify(response),
+                Json.stringify(response),
               );
 
             //Set NFTs
@@ -177,7 +173,7 @@ function Offers(props) {
             }
             //Verify Metadata
             nft = verifyMetadata(nft);
-            return <NFTDisplaySingle key={index} nft={nft} />;
+            return <OfferDisplaySingle key={index} nft={nft} />;
           })}
         </Skeleton>
       </div>
