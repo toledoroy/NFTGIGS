@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { useEffect, useState } from "react";
 import {
   useMoralis,
@@ -10,6 +9,8 @@ import { useIPFS } from "./useIPFS";
 
 /**
  * DEPRECATED
+ *
+ *
  * @param {*} props
  * @returns
  */
@@ -69,7 +70,7 @@ export const useOffers = (props) => {
   );
 
   /**
-   * Fetch NFTs viaCOVALENT NFT API
+   * Fetch NFTs via COVALENT NFT API
    *    - No Support for Mumbai...
    */
   async function offersGetNFTPort() {
