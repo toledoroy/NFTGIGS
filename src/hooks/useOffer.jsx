@@ -120,6 +120,42 @@ export const useOffer = (props) => {
     });
   } //order()
 
+  /**
+   * Deliver Order
+   * @param num token_id
+   */
+  async function deliver(token_id, order_id, delivery_uri) {
+    //Validate
+    if (!contractData) throw new Error("useOffer.deliver() Contract Data Missing", { contractData });
+    if (!token_id || !order_id || !delivery_uri) throw new Error("useOffer.deliver() Missing Parameters", { token_id, order_id, delivery_uri });
+    const options = {
+      contractAddress: contractData.hash,
+      abi: contractData.abi,
+      functionName: "deliver",
+      params: { token_id, order_id, delivery_uri },
+    };
+    //Run Contract Call
+    return contractCall(options);
+  } //deliver()
+
+  /**
+   * Approve Order
+   * @param num token_id
+   */
+  async function approve(token_id, order_id, rating, review_uri) {
+    //Validate
+    if (!contractData) throw new Error("useOffer.approve() Contract Data Missing", { contractData });
+    if (!token_id || !order_id || rating === undefined || !review_uri) throw new Error("useOffer.approve() Missing Parameters", { token_id, order_id, rating, review_uri });
+    const options = {
+      contractAddress: contractData.hash,
+      abi: contractData.abi,
+      functionName: "approve",
+      params: { token_id, order_id, rating, review_uri },
+    };
+    //Run Contract Call
+    return contractCall(options);
+  } //approve()
+
 
   //-- Reads 
 
@@ -138,6 +174,9 @@ export const useOffer = (props) => {
     });
   }
 
+  /**
+   * Get Token's Available Supply
+   */
   async function getSupply(token_id) {
     const options = {
       contractAddress: contractData.hash,
@@ -148,6 +187,23 @@ export const useOffer = (props) => {
     return Moralis.executeFunction(options).then((response) => {
       return Number(response?.['_hex']);
     });
+  }
+
+  /**
+   * Get Creator
+   * @param {*} token_id 
+   * @returns {string} address
+   */
+  async function getCreator(token_id) {
+    const options = {
+      contractAddress: contractData.hash,
+      abi: contractData.abi,
+      functionName: "_creators",    //TODO: on next version, use 'creator'
+      params: { token_id },
+    };
+    return Moralis.executeFunction(options);  //.then((response) => {
+    // return response;
+    // });
   }
 
   /**
@@ -181,9 +237,11 @@ export const useOffer = (props) => {
       return name ? statuseNames[response] : response;
     });
   }
+
+
   return {
-    sell, buy, order,
+    sell, buy, order, deliver, approve,
     saveJSONToIPFS,
-    getPrice, getSupply, getCredit, getStatus,
+    getPrice, getSupply, getCredit, getStatus, getCreator,
   };
 };
