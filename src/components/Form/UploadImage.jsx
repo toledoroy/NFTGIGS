@@ -30,12 +30,15 @@ function UploadImage(props) {
             file.type === "image/jpeg" ||
             file.type === "image/png" ||
             file.type === "image/gif" ||
+            file.type === "image/webp" ||
             file.type === "image/svg+xml";
-        if (!isJpgOrPng)
-            message.error("Sorry, only JPG/PNG/GIF files are currently supported");
+        if (!isJpgOrPng) message.error("Sorry, only JPG/PNG/GIF files are currently supported");
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) message.error("Image must smaller than 2MB!");
         // return isJpgOrPng && isLt2M;
+
+        //TODO: Fail the upload on error
+
         //Set Loading
         if (isJpgOrPng && isLt2M) setImageLoading(true);
         //Always False - Manual Upload Via handleChangeFile()
@@ -93,6 +96,7 @@ function UploadImage(props) {
                 margin: "auto",
                 maxHeight: size,
                 maxWidth: size,
+                minHeight: '80px',
                 cursor: "pointer",
             }}
         >
