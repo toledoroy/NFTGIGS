@@ -7,10 +7,10 @@ import {
   useMoralisWeb3ApiCall,
   useWeb3ExecuteFunction,
 } from "react-moralis";
-// import { IPFS } from "helpers/IPFS";
-// import { useIPFS } from "./useIPFS";
-// const axios = require("axios").default;
 
+/**
+ * Hook: Interface for Offers Contract
+ */
 export const useOffer = (props) => {
   const { Moralis, chainId } = useMoralis();
   const contractProcessor = useWeb3ExecuteFunction();
@@ -18,6 +18,7 @@ export const useOffer = (props) => {
 
   /**
    * Save JSON File to IPFS
+   * @param {object} jsonFile
    */
   async function saveJSONToIPFS(jsonObject, fileName = "file.json") {
     //Save to IPFS
@@ -52,6 +53,8 @@ export const useOffer = (props) => {
       },
     });
   }
+
+  //-- Writes
 
   /**
    * Sell (Make a New Offer)
@@ -95,7 +98,6 @@ export const useOffer = (props) => {
       else throw new Error(error);  //Pass Onwards
     });
   } //buy()
-
 
   /**
    * order

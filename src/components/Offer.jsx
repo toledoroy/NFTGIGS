@@ -87,7 +87,8 @@ function Offer(props) {
                     // name: "token_price",
                     placeholder: "How much?",
                     rules: [{ required: true, message: "If your product is free, type 0" }],
-                    addonAfter: "MATIC",
+                    // addonAfter: "MATIC",
+                    addonAfter: "WEI",
                 },
                 max_supply: {
                     type: "number",
@@ -105,15 +106,13 @@ function Offer(props) {
                 // try {
                 let uri = await saveJSONToIPFS(data.metadata);
 
-                //Normalize Price
+                //TODO: Adjust Price (Using WEI on Test)
                 // let price = data.token_price * 10 ** 18;
                 let price = data.token_price;
-                console.warn("[TEST] Offer() Submitted Sell Func.", { data, uri, price });
+                // console.warn("[TEST] Offer() Submitted Sell Func.", { data, uri, price });
                 //Call Sell Function
                 let result = await sell(price, data.max_supply, uri);
-
-                console.warn("[TEST] Offer() Sell Func. Completed", { data, uri, result });
-
+                // console.warn("[TEST] Offer() Sell Func. Completed", { data, uri, result });
                 return result;
                 // } catch (error) {
                 //     console.error("[CAUGHT] Offer.sell() IPFS or Contract Call Failed:", { error, data });

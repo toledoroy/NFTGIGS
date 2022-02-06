@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 // import { Table } from 'antd';
 // import { Link } from "react-router-dom";
-import { Input } from "antd";
+import { Input, Button } from "antd";
 import { OfferContractContext } from "context/context";
 import { useOffer } from "hooks/useOffer";
 import { useIPFS } from "hooks/useIPFS";
@@ -17,25 +17,32 @@ function OfferView(props) {
   const [token, setToken] = useState({});
   const [isLoading, setIsLoading] = useState();
   const { resolveLink } = useIPFS();
-  const { Moralis, account } = useMoralis();
+  const { Moralis, account, isInitialized } = useMoralis();
 
   //TODO: Make this into a hook
   const [price, setPrice] = useState();
   const [stock, setStock] = useState();
   const [credit, setCredit] = useState();
+  const [creator, setCreator] = useState();
   const [statuses, seStatuses] = useState();
-  const { order, getPrice, getSupply, getCredit, getStatus } = useOffer();
+  const [isSeller, setIsSeller] = useState();
+  const [isBuyer, setIsBuyer] = useState();
+  const {
+    order, buy,
+    getPrice, getSupply, getCredit, getStatus, getCreator
+  } = useOffer();
   useEffect(() => {
-    loadOnChainData(token);
-  }, [token]);
+    if (isInitialized && account) loadOnChainData(token);
+  }, [token, isInitialized, account]);
   const loadOnChainData = async (nft) => {
     //Fetch onChain Data
-    let price = await getPrice(nft.token_id);
-    setPrice(price);
-    let supply = await getSupply(nft.token_id);
-    setStock(supply);
-    let credit = await getCredit(account, nft.token_id);
-    setCredit(credit);
+
+
+    getPrice(token_id).then(res => setPrice(res));
+    getSupply(token_id).then(res => setStock(res));
+    getCredit(account, token_id).then(res => setCredit(res));
+    getCreator(token_id).then(res => { setCreator(res.toLowerCase()); setIsSeller(res.toLowerCase() === account) });
+
   };
 
 
@@ -118,6 +125,7 @@ function OfferView(props) {
   }
 
   const { data: evtSold } = useMoralisQuery("mumbaiOfferSoldd", (query) => query.equalTo("token_id", token_id), [], { live: true, });
+  const { data: evtOrderMy } = useMoralisQuery("mumbaiOfferOrderd", (query) => query.equalTo("token_id", token_id).equalTo("account", account), [account], { live: true, });
   const { data: evtOrder } = useMoralisQuery("mumbaiOfferOrderd", (query) => query.equalTo("token_id", token_id), [], { live: true, });
 
   useEffect(() => {
@@ -140,84 +148,136 @@ function OfferView(props) {
   };
   return (
     <div className="framed offer">
-      <h1>Offer #{token_id}</h1>
+      <h1>Offer G{token_id}</h1>
       <div className="offer-image">
         <img src={token.image} alt={token.name} style={{ width: '400px' }} />
       </div>
       <div className="offer-info">
         <div> Offer #{token.token_id}</div>
-
+        <div> By: {creator}</div>
         <div> Price: {price}</div>
         <div> Qty: {stock}</div>
       </div>
-      <hr />
-
-      <h2>Make an Order</h2>
-      <div className='offer-actions'>
-        <div> Credit: {credit}</div>
-        <Input.TextArea
-          placeholder={"Fill in order details..."}
-          autoSize={{ minRows: 6, maxRows: 6 }}
-
-        />
-        {/* Save to IPFS & Send the URI */}
-        <button onClick={() => order(token.token_id, '"ipfs://QmSWrZDYFXXQhHfVygbptYyrw8qxSUFYsvBvixFzPSn9Qv"')} disabled={credit === 0}>Order</button>
-      </div>
 
       <hr />
 
-      <h2>Stats</h2>
+      {!isSeller && <>
+        <h2>Make an Order</h2>
+        <div className='offer-actions'>
+          <div> Credit: {credit}</div>
+          <Input.TextArea
+            placeholder={"Fill in order details..."}
+            autoSize={{ minRows: 6, maxRows: 6 }}
+          />
+          {/* Save to IPFS & Send the URI */}
+          {credit === 0 ? <div>(You don't have enough credit to make an order)</div> :
+            <Button onClick={() => order(token.token_id, "ipfs://QmSWrZDYFXXQhHfVygbptYyrw8qxSUFYsvBvixFzPSn9Qv")} disabled={credit === 0}>Order</Button>
+          }
+          <br />
+          <Button onClick={() => {
+            buy(token_id, 1, price)
+              .catch(error => {
+                message.error("Sorry, Purchase failed.", 10);
+                console.error("[TEST] Error buying Token:" + nftToSend.token_id, { amountToSend, price, error });
+              });
+          }
+          }>Buy Another Token</Button>
+        </div>
+
+        <hr />
+      </>}
+
+      <h2>Stats {isSeller ? "(seller view)" : "(buyer view)"} </h2>
       <div className="offer-stats">
-        <h3>Sold To</h3>
-        <table>
-          <tbody>
-            <tr><th>account</th></tr>
-            {evtSold.map((evt) => (
-              <tr>
-                <td>
-                  {evt.get('account')}
-                </td>
-              </tr>
-            )
-            )}
-          </tbody>
-        </table>
-        <h3>Orders</h3>
-        <table>
-          <tbody>
-            <tr>
-              <th>account</th>
-              <th>orderId</th>
-              <th>URI</th>
-              <th>Status</th>
-              <th>Link</th>
-            </tr>
-            {evtOrder.map((evt) => (
-              <tr>
-                <td>
-                  {evt.get('account')}
-                </td>
-                <td>
-                  {'G' + evt.get('token_id') + 'G' + evt.get('order_id')}
-                </td>
-                <td>
-                  {evt.get('uri')}
-                </td>
+        <h3>Sold {evtSold.length + 1} Units To:</h3>
+        <ul>
+          <li>{account}</li>
+          {evtSold.map((evt) => (
+            <li>{evt.get('account')}</li>
+          )
+          )}
+        </ul>
 
-                <td>
-                  {statuses?.[evt?.get('order_id')]}
-                </td>
+        {isSeller &&
+          <div className='orders-pending'>
+            <h3>Pending Orders</h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>account</th>
+                  <th>orderId</th>
+                  <th>URI</th>
+                  <th>Status</th>
+                  <th>Link</th>
+                </tr>
+                {evtOrder.map((evt) => (
+                  <tr>
+                    <td>
+                      {evt.get('account')}
+                    </td>
+                    <td>
+                      {'G' + evt.get('token_id') + 'G' + evt.get('order_id')}
+                    </td>
+                    <td>
+                      {evt.get('uri')}
+                    </td>
 
-                <td>
-                  <a href={"/order/" + token.token_id + '/' + evt.get('order_id')}>Order Page</a>
-                </td>
-              </tr>
-            )
-            )}
-          </tbody>
+                    <td>
+                      {statuses?.[evt?.get('order_id')]}
+                    </td>
+                    <td>
+                      <a href={"/order/" + token.token_id + '/' + evt.get('order_id')}>Order Page</a>
+                    </td>
+                  </tr>
+                )
+                )}
+              </tbody>
+            </table>
+          </div>
+        }
 
 
-        </table>
+        {!isSeller &&
+          <div className='orders-my'>
+            <h3>My Orders</h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>account</th>
+                  <th>orderId</th>
+                  <th>URI</th>
+                  <th>Status</th>
+                  <th>Link</th>
+                </tr>
+                {evtOrderMy.map((evt) => {
+                  return (
+                    <tr>
+                      <td>
+                        {evt.get('account')}
+                      </td>
+                      <td>
+                        {'G' + evt.get('token_id') + 'G' + evt.get('order_id')}
+                      </td>
+                      <td>
+                        {evt.get('uri')}
+                      </td>
+
+                      <td>
+                        {statuses?.[evt?.get('order_id')]}
+                      </td>
+                      <td>
+                        {(evt.get('account') === account)
+                          ? <a href={"/order/" + token.token_id + '/' + evt.get('order_id')}>Order Page</a>
+                          : <span>(for buyer only)</span>
+                        }
+                      </td>
+                    </tr>);
+                })}
+              </tbody>
+            </table>
+          </div>
+        }
+
       </div>
     </div>
   );

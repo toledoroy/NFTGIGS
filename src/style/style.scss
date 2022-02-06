@@ -1,9 +1,24 @@
+
+
+table{
+    width: 100%;
+    td{
+        border: 1px solid #aaa;
+        padding: 4px 8px;
+    }
+}
+
 /* NFT Item Display */
 .NFT{
     border-radius: 12px;
     width: 120px;
 }
 
+.offer {
+    h2, h3{
+        margin-top:20px;
+    }
+}
 /* FIX THAT WEIRD IFRAME THAT HIDES EVERYTHING AFTER Hot Page Reload */
 body>iframe{
     display:none;
