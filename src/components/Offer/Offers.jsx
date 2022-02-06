@@ -28,20 +28,12 @@ const styles = {
     maxWidth: "1000px",
     width: "100%",
     gap: "10px",
+    flexWrap: 'wrap',
   },
 };
 
 /**
  * Offers (All) Page
- *
- * TODO:
- * - All Offers
- * - Single Offer
- * - Create an Offer
- * - Buy an Offer
- * - Order an Offer
- * - Deliver Offer
- * - Approve & Review anOffer
  */
 function Offers(props) {
   const { resolveLink } = useIPFS();

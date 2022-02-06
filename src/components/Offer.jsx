@@ -13,12 +13,13 @@ var _ = require("lodash");
  *
  * TODO:
  * V All Offers
- * - Single Offer
+ * V Single Offer
  * V Create an Offer
  * V Buy an Offer
- * - Order an Offer
+ * V Order an Offer
+ * - Order View
  * - Deliver Offer
- * - Approve & Review anOffer
+ * - Approve & Review 
  */
 function Offer(props) {
     const { isWeb3Enabled, isInitialized } = useMoralis();
