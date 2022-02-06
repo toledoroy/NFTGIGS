@@ -10,7 +10,7 @@ import {
 import { IPFS } from "helpers/IPFS";
 
 /**
- * Component: Image Upload
+ * Component: Image Upload Component
  */
 function UploadImage(props) {
     const { Moralis } = useMoralis();
