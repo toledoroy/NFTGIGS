@@ -25,7 +25,9 @@ import Contract from "components/Contract/Contract";
 import Text from "antd/lib/typography/Text";
 import Ramper from "components/Ramper";
 import Offer from "components/Offer";
+import OfferView from "components/Offer/OfferView";
 import Offers from "components/Offer/Offers";
+import OrderSingle from "components/OrderSingle";
 import MenuItems from "./components/MenuItems";
 import { OfferContractContext } from "context/context";
 const { Header, Footer } = Layout;
@@ -138,8 +140,10 @@ const App = ({ isServerInfo }) => {
                 <ERC20Transfers />
               </Route>
 
-              <Route path="/offers" component={Offers} />
-              <Route path="/offer/:action" component={Offer} />
+              <Route path="/offers" exact component={Offers} />
+              <Route path="/offer/:id" component={OfferView} />
+              <Route path="/offers/:action" component={Offer} />
+              <Route path="/order/:token_id/:order_id" component={OrderSingle} />
 
               <Route path="/nftBalance">
                 <NFTBalance />

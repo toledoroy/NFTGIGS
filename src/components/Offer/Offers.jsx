@@ -21,8 +21,8 @@ const { Meta } = Card;
 const styles = {
   NFTs: {
     display: "flex",
-    flexWrap: "wrap",
-    WebkitBoxPack: "start",
+    // flexWrap: "wrap",
+    // WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "1000px",
@@ -167,13 +167,10 @@ function Offers(props) {
       <h1>Offers</h1>
       <div style={styles.NFTs}>
         <Skeleton loading={isLoading}>
-          {tokens.map((nft, index) => {
-            {
-              console.warn("[TEST] NFT", nft);
-            }
+          {tokens.map((nft) => {
             //Verify Metadata
             nft = verifyMetadata(nft);
-            return <OfferDisplaySingle key={index} nft={nft} />;
+            return <OfferDisplaySingle key={nft.token_id} nft={nft} />;
           })}
         </Skeleton>
       </div>

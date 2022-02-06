@@ -45,7 +45,7 @@ function MenuItems() {
         <NavLink to="/offers">Offers</NavLink>
       </Menu.Item>
       <Menu.Item key="/offerAdd">
-        <NavLink to="/offer/sell">New Offer</NavLink>
+        <NavLink to="/offers/sell">New Offer</NavLink>
       </Menu.Item>
 
       <Menu.Item key="/contract">

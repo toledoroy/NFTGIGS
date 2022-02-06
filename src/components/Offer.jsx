@@ -5,103 +5,17 @@ import { Form, Input, InputNumber, Result, Button, Skeleton, Spin, message } fro
 import { Link } from "react-router-dom";
 // import { rules } from "eslint-config-prettier";
 import UploadImage from "components/Form/UploadImage";
+import { useOffer } from "hooks/useOffer";
 var _ = require("lodash");
 
-/**
- * Describe all Offer Stages
- * @todo Validate Positive Numbers
- */
-const pages = {
-    sell: {
-        title: "Make an Offer",
-        formFields: {
-            //Offer Sell Form Structure
-            image: {
-                type: "image",
-                label: "image",
-                // name: "image",
-                //Custom validation
-                rules: {
-                    required: true,
-                    message: "Make sure you add some kind of an Image for this gig",
-                },
-
-                isMetadata: true,
-            },
-            name: {
-                label: "Title",
-                // name: "name",
-                placeholder: "What are you offering?",
-                rules: [
-                    {
-                        required: true,
-                        message: "Seems you forgot to fill in the title of your gig",
-                    },
-                ],
-                isMetadata: true,
-            },
-            description: {
-                type: "textarea",
-                label: "Description",
-                // name: "description",
-                placeholder: "The fine print",
-                rules: [
-                    {
-                        required: true,
-                        message: "You need to give some extra information about your gig",
-                    },
-                ],
-                isMetadata: true,
-            },
-            token_price: {
-                type: "number",
-                label: "Price",
-                // name: "token_price",
-                placeholder: "How much?",
-                rules: [{ required: true, message: "If your product is free, type 0" }],
-                addonAfter: "MATIC",
-            },
-            max_supply: {
-                type: "number",
-                label: "Supply",
-                // name: "max_supply",
-                placeholder: "How many?",
-                rules: [
-                    { required: true, message: "What's your max capacity for this gig?" },
-                ],
-                addonAfter: "Orders",
-            },
-        },
-        submit: async (data) => {
-            console.warn("[TEST] Offer() Submitted Sell Func.", data);
-            return data;
-        },
-    },
-    // buy: { },    //Modal
-    order: {
-        title: "Make an Order",
-        formFields: {
-            //Offer Order Form Structure
-            details: {
-                type: "textarea",
-                label: "Details",
-                name: "details",
-                placeholder: "What do you need?",
-                isMetadata: true,
-            },
-        },
-    },
-    deliver: {},
-    approve: {},
-};
 /**
  * Offer Controller
  *
  * TODO:
- * - All Offers
+ * V All Offers
  * - Single Offer
- * - Create an Offer
- * - Buy an Offer
+ * V Create an Offer
+ * V Buy an Offer
  * - Order an Offer
  * - Deliver Offer
  * - Approve & Review anOffer
@@ -111,15 +25,119 @@ function Offer(props) {
     // const [metadata, setMetadata] = useState({});
     const [isSaving, setisSaving] = useState(false);
     const [files, setFiles] = useState({});
-
+    const { sell, saveJSONToIPFS, contractCall } = useOffer();
     const curPage = props?.match?.params?.action;
-    //Expected Fields
-    const formFields = pages[curPage].formFields;
 
     const [form] = Form.useForm(); //Form Handle
     useEffect(() => {
         console.log("Offers Controller -- Loaded Page: " + curPage);
     });
+
+
+    /**
+     * Describe all Offer Stages
+     * @todo Validate Positive Numbers
+     */
+    const pages = {
+        sell: {
+            title: "Post a new GIG",
+            formFields: {
+                //Offer Sell Form Structure
+                image: {
+                    type: "image",
+                    label: "image",
+                    // name: "image",
+                    //Custom validation
+                    rules: {
+                        required: true,
+                        message: "Make sure you add some kind of an Image for this gig",
+                    },
+
+                    isMetadata: true,
+                },
+                name: {
+                    label: "Title",
+                    // name: "name",
+                    placeholder: "What are you offering?",
+                    rules: [
+                        {
+                            required: true,
+                            message: "Seems you forgot to fill in the title of your gig",
+                        },
+                    ],
+                    isMetadata: true,
+                },
+                description: {
+                    type: "textarea",
+                    label: "Description",
+                    // name: "description",
+                    placeholder: "The fine print",
+                    rules: [
+                        {
+                            required: true,
+                            message: "You need to give some extra information about your gig",
+                        },
+                    ],
+                    isMetadata: true,
+                },
+                token_price: {
+                    type: "number",
+                    label: "Price",
+                    // name: "token_price",
+                    placeholder: "How much?",
+                    rules: [{ required: true, message: "If your product is free, type 0" }],
+                    addonAfter: "MATIC",
+                },
+                max_supply: {
+                    type: "number",
+                    label: "Supply",
+                    // name: "max_supply",
+                    placeholder: "How many?",
+                    rules: [
+                        { required: true, message: "What's your max capacity for this gig?" },
+                    ],
+                    addonAfter: "Orders",
+                },
+            },
+            submit: async (data) => {
+
+                // try {
+                let uri = await saveJSONToIPFS(data.metadata);
+
+                //Normalize Price
+                // let price = data.token_price * 10 ** 18;
+                let price = data.token_price;
+                console.warn("[TEST] Offer() Submitted Sell Func.", { data, uri, price });
+                //Call Sell Function
+                let result = await sell(price, data.max_supply, uri);
+
+                console.warn("[TEST] Offer() Sell Func. Completed", { data, uri, result });
+
+                return result;
+                // } catch (error) {
+                //     console.error("[CAUGHT] Offer.sell() IPFS or Contract Call Failed:", { error, data });
+                // }
+            },
+        },
+        // buy: { },    //Modal
+        order: {
+            title: "Make an Order",
+            formFields: {
+                //Offer Order Form Structure
+                details: {
+                    type: "textarea",
+                    label: "Details",
+                    name: "details",
+                    placeholder: "What do you need?",
+                    isMetadata: true,
+                },
+            },
+        },
+        deliver: {},
+        approve: {},
+    };
+    //Expected Current Page's Fields
+    const formFields = pages[curPage].formFields;
 
     /**
      * Save Procedure (Form Submit Function)
@@ -167,14 +185,12 @@ function Offer(props) {
         let result = await pages[curPage]
             .submit(data)
             .then((result) => {
-                // console.warn("[TEST] Offer.onFinish() (IN) Result:", result);    //V
-                //     setisSaving(false);
+                console.warn("[TEST] Offer.onFinish() (IN) Result:", result);    //V
                 return result;
             })
             .catch((error) => {
                 console.error("Offer.onFinish() Error:", error);
                 message.error("Ooops, Something went wrong", 20);
-                // setisSaving(false);
             });
         //Done Saving
         setisSaving(false);
