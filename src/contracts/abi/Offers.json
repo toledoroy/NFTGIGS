@@ -257,7 +257,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "token_id",
         "type": "uint256"
       }
     ],
@@ -265,7 +265,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "account",
         "type": "address"
       }
     ],
