@@ -20,8 +20,8 @@ const pages = {
                 type: "image",
                 label: "image",
                 // name: "image",
-                rules:  //Custom validation
-                {
+                //Custom validation
+                rules: {
                     required: true,
                     message: "Make sure you add some kind of an Image for this gig",
                 },
@@ -71,7 +71,6 @@ const pages = {
                 ],
                 addonAfter: "Orders",
             },
-
         },
         submit: async (data) => {
             console.warn("[TEST] Offer() Submitted Sell Func.", data);
@@ -128,7 +127,6 @@ function Offer(props) {
      * @ret void
      */
     const onFinish = async (values) => {
-
         // console.warn("[TEST] Offer.onFinish() Values ", { values }); //V
 
         //Request Data
@@ -159,7 +157,6 @@ function Offer(props) {
                 //Append to Metadata  (Treat as Optinal Values)
                 if (values[key]) data.metadata[key] = values[key];
             } else data[key] = values[key];
-
         } //Each Expected Item
 
         // console.warn("[TEST] Offer.onFinish() Ready to Submit Data:", data);
@@ -183,7 +180,6 @@ function Offer(props) {
         setisSaving(false);
 
         // console.warn("[TEST] Offer.onFinish() (OUT) Result:", result); //V
-
     }; //onFinish()
 
     //Validate Requested Page
@@ -242,7 +238,8 @@ function Offer(props) {
                                             });
                                         }}
                                         imageUrl={files?.[field_name]}
-                                    />);
+                                    />
+                                );
                             } //Files
                             else if (field.type === "textarea") {
                                 //Long Text
@@ -269,10 +266,18 @@ function Offer(props) {
                                         label={field.label}
                                         rules={field.rules}
                                     >
-                                        {(field.type === "number")
-                                            ? <InputNumber addonBefore={field.addonBefore} addonAfter={field.addonAfter} />
-                                            : <Input placeholder={placeholder} addonBefore={field.addonBefore} addonAfter={field.addonAfter} />
-                                        }
+                                        {field.type === "number" ? (
+                                            <InputNumber
+                                                addonBefore={field.addonBefore}
+                                                addonAfter={field.addonAfter}
+                                            />
+                                        ) : (
+                                            <Input
+                                                placeholder={placeholder}
+                                                addonBefore={field.addonBefore}
+                                                addonAfter={field.addonAfter}
+                                            />
+                                        )}
                                     </Form.Item>
                                 );
                             }
@@ -289,7 +294,7 @@ function Offer(props) {
                             </div>
                         )}
                         {!isSaving && (
-                            <Form.Item wrapperCol={{ offset: 6 }}>
+                            <Form.Item wrapperCol={{ offset: 8 }}>
                                 <Button type="primary" htmlType="submit">
                                     Send
                                 </Button>
