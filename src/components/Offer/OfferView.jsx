@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 // import { Table } from 'antd';
 // import { Link } from "react-router-dom";
-import { Input, Button } from "antd";
+import { Input, Button, message } from "antd";
 import { OfferContractContext } from "context/context";
 import { useOffer } from "hooks/useOffer";
 import { useIPFS } from "hooks/useIPFS";
@@ -154,7 +154,7 @@ function OfferView(props) {
       </div>
       <div className="offer-info">
         <div> Offer #{token.token_id}</div>
-        <div> By: {creator}</div>
+        <div> Seller: {creator}</div>
         <div> Price: {price}</div>
         <div> Qty: {stock}</div>
       </div>
@@ -175,25 +175,68 @@ function OfferView(props) {
           }
           <br />
           <Button onClick={() => {
-            buy(token_id, 1, price)
+            console.warn("[TEST] Offers.order() Ordering", { token_id, amount: '1', price });
+            buy(Number(token_id), 1, price)
               .catch(error => {
                 message.error("Sorry, Purchase failed.", 10);
-                console.error("[TEST] Error buying Token:" + nftToSend.token_id, { amountToSend, price, error });
+                console.error("[TEST] Error buying Token:" + token_id, { price, error });
               });
           }
-          }>Buy Another Token</Button>
+          }>Buy A Token</Button>
         </div>
-
         <hr />
       </>}
 
+      {!isSeller &&
+        <div className='orders-my'>
+          <h3>My Orders</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>account</th>
+                <th>orderId</th>
+                <th>URI</th>
+                <th>Status</th>
+                <th>Link</th>
+              </tr>
+              {evtOrderMy.map((evt) => {
+                return (
+                  <tr>
+                    <td>
+                      {evt.get('account')}
+                    </td>
+                    <td>
+                      {'G' + evt.get('token_id') + 'G' + evt.get('order_id')}
+                    </td>
+                    <td>
+                      {evt.get('uri')}
+                    </td>
+
+                    <td>
+                      {statuses?.[evt?.get('order_id')]}
+                    </td>
+                    <td>
+                      {(evt.get('account') === account)
+                        ? <a href={"/order/" + token.token_id + '/' + evt.get('order_id')}>Order Page</a>
+                        : <span>(for buyer only)</span>
+                      }
+                    </td>
+                  </tr>);
+              })}
+            </tbody>
+          </table>
+        </div>
+      }
+
       <h2>Stats {isSeller ? "(seller view)" : "(buyer view)"} </h2>
       <div className="offer-stats">
-        <h3>Sold {evtSold.length + 1} Units To:</h3>
+        <h4>{evtSold.length + 1} Units Sold</h4>
+        <h3>Buyers:</h3>
+
         <ul>
-          <li>{account}</li>
+          <li key="self">{account}</li>
           {evtSold.map((evt) => (
-            <li>{evt.get('account')}</li>
+            <li key={evt.id}>{evt.get('account')}</li>
           )
           )}
         </ul>
@@ -237,46 +280,6 @@ function OfferView(props) {
         }
 
 
-        {!isSeller &&
-          <div className='orders-my'>
-            <h3>My Orders</h3>
-            <table>
-              <tbody>
-                <tr>
-                  <th>account</th>
-                  <th>orderId</th>
-                  <th>URI</th>
-                  <th>Status</th>
-                  <th>Link</th>
-                </tr>
-                {evtOrderMy.map((evt) => {
-                  return (
-                    <tr>
-                      <td>
-                        {evt.get('account')}
-                      </td>
-                      <td>
-                        {'G' + evt.get('token_id') + 'G' + evt.get('order_id')}
-                      </td>
-                      <td>
-                        {evt.get('uri')}
-                      </td>
-
-                      <td>
-                        {statuses?.[evt?.get('order_id')]}
-                      </td>
-                      <td>
-                        {(evt.get('account') === account)
-                          ? <a href={"/order/" + token.token_id + '/' + evt.get('order_id')}>Order Page</a>
-                          : <span>(for buyer only)</span>
-                        }
-                      </td>
-                    </tr>);
-                })}
-              </tbody>
-            </table>
-          </div>
-        }
 
       </div>
     </div>

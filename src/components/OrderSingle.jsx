@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, Input, InputNumber, Form, Radio } from "antd";
 // import { OfferContractContext } from "context/context";
 import { useOffer } from "hooks/useOffer";
-// import { useIPFS } from "hooks/useIPFS";
+import { useIPFS } from "hooks/useIPFS";
 import { useMoralis, useMoralisQuery } from "react-moralis";
 
 
@@ -13,14 +13,16 @@ import { useMoralis, useMoralisQuery } from "react-moralis";
 function OrderSingle(props) {
     const { token_id, order_id } = props.match.params;
     const { Moralis, account, isInitialized, isWeb3Enabled } = useMoralis();
+    const { resolveLink } = useIPFS();
     const {
         saveJSONToIPFS,
         deliver, approve,
         getPrice, getSupply, getCredit, getStatus, getCreator
     } = useOffer();
 
+    const [metadataNew, setMetadataNew] = useState();
     const [metadata, setMetadata] = useState();
-    const [order, setOrder] = useState({});
+    const [order, setOrder] = useState();
 
     //TODO: Make this into a hook
     const [price, setPrice] = useState();
@@ -39,6 +41,7 @@ function OrderSingle(props) {
             console.warn("[DEV] OrderSingle: ", order?.attributes);
             setOrder(order);
             setIsBuyer(order.get('account') === account);
+            if (order.get('uri')) fetchMetadata(order.get('uri'));
         });
         //Fetch onChain Data
         getPrice(token_id).then(res => setPrice(res));
@@ -50,6 +53,21 @@ function OrderSingle(props) {
             setIsSeller(res.toLowerCase() === account)
         });
     };
+    const fetchMetadata = async (uri) => {
+        //Get Metadata
+        fetch(resolveLink(uri))
+            .then((res) => res.json())
+            .then((result) => {
+
+                //Log
+                if (!result) console.error("OrderSingle.fetchMetadata() Failed to Fetch Metadata URI:", { uri, result },);
+                else console.warn("[FYI] OrderSingle.fetchMetadata() Metadata ", { uri, result },);
+                setMetadata(result);
+            })
+            .catch((err) => {
+                console.error("OrderSingle.fetchMetadata() Error Caught:", { err, uri });
+            });
+    };
 
     /**
      * Submit Approval Form
@@ -60,8 +78,16 @@ function OrderSingle(props) {
     }
     return (
         <div className="framed offer order">
-            <h1>Order {'G' + token_id + 'G' + order_id}</h1>
             <h3>Status: {status}</h3>
+
+            {order &&
+                <div className="order-info">
+
+                    <div> Buyer: {order?.get('account')}</div>
+                    <div> Price: {price}</div>
+                    <div> URI: {order?.get('uri')}</div>
+                </div>
+            }
 
 
             {(status === 'requested') && <>
@@ -72,12 +98,12 @@ function OrderSingle(props) {
                             <Input.TextArea
                                 placeholder={"Delivery Note"}
                                 autoSize={{ minRows: 6, maxRows: 6 }}
-                                onChange={(evt) => setMetadata(evt.target.value)}
+                                onChange={(evt) => setMetadataNew(evt.target.value)}
                             />
                             <div>[Potential Image/File Upload]</div>
                             <Button default onClick={async () => {
                                 //Save to IPFS & Register Delivery URI to the Contract
-                                let delivery_uri = await saveJSONToIPFS(metadata);
+                                let delivery_uri = await saveJSONToIPFS(metadataNew);
                                 deliver(token_id, order_id, delivery_uri);
                             }} disabled={!isSeller}>Deliver</Button>
                         </div>

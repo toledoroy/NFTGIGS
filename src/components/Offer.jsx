@@ -41,7 +41,7 @@ function Offer(props) {
      */
     const pages = {
         sell: {
-            title: "Post a new GIG",
+            title: "Mint a new GIG",
             formFields: {
                 //Offer Sell Form Structure
                 image: {
@@ -236,6 +236,7 @@ function Offer(props) {
                     // initialValues={{name: "name",}}
                     autoComplete="off"
                     form={form}
+                    className="block"
                 >
                     {_.map(formFields, function (field, field_name) {
                         if (field.element) return field.element;

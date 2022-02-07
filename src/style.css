@@ -1,3 +1,15 @@
+:root {
+  --block-bg: #f0f2f5;
+  --headerHeight:64px;
+  --footer-height:63px;
+  --cardWidth: 200px;
+  --borderRadius: 15px;
+}
+#root>section{
+  background: rgb(34,193,195);
+  background: linear-gradient(169deg, rgba(34,193,195,1) 7%, rgba(153,226,112,1) 86%);
+}
+
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active::after,
@@ -13,8 +25,19 @@
 .ant-menu-horizontal > .ant-menu-item a:hover {
   color: #21bf96 !important;
 }
+.ant-layout-footer{
+  background-color: transparent;
+  border-top:1px solid #e8e8e8;
+}
 
 .ant-modal-content {
   overflow: auto;
   border-radius: 1rem;
+}
+
+.block{
+  
+  background: rgba(250, 250, 200 ,0.5);
+  border-radius: var(--borderRadius);
+  padding: 15px 20px;
 }

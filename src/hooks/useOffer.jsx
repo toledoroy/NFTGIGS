@@ -90,6 +90,7 @@ export const useOffer = (props) => {
       params: { quantity, token_id },
       msgValue: totalPrice,
     };
+    console.warn("useOffer.buy() Run W/options:", options);
     //Run Contract Call
     return contractCall(options).catch((error) => {
       if (error.message === "execution reverted: PAYMENT_MISMATCH") {

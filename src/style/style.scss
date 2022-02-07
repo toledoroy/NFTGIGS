@@ -12,6 +12,9 @@ table{
 .NFT{
     border-radius: 12px;
     width: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .offer {
