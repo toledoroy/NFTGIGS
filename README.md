@@ -1,6 +1,6 @@
-# `Tenner`
+# `NFT Gigs`
 
-> A permissionless, open, gig marketplace
+> A decentralized, permissionless gig marketplace
 
 Built for ETHGlobal Road to Web3 Hackathon
 
