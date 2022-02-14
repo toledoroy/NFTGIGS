@@ -10,13 +10,14 @@ import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-des
 // import { getExplorer } from "helpers/networks";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { useIPFS } from "hooks/useIPFS";
+
+import { useContractTokens } from "hooks/useContractTokens";
+
 // import AddressInput from "components/AddressInput";
 import OfferDisplaySingle from "components/NFT/OfferDisplaySingle";
 import { OfferContractContext } from "context/context";
 
-// **** DEPRECATED ** \\
-
-const { Meta } = Card;
+// const { Meta } = Card;
 
 const styles = {
   NFTs: {
@@ -36,89 +37,22 @@ const styles = {
  * Offers (All) Page
  */
 function Offers(props) {
-  const { resolveLink } = useIPFS();
-  const [tokens, setTokens] = useState([]);
-  const [error, setError] = useState();
-  const [isLoading, setIsLoading] = useState();
+  // const { resolveLink } = useIPFS();
+  // const [tokens, setTokens] = useState([]);
+  // const [error, setError] = useState();
+  // const [isLoading, setIsLoading] = useState();
   const { contractData } = useContext(OfferContractContext);
   const { verifyMetadata } = useVerifyMetadata();
+  const { tokens, isLoading } = useContractTokens({ address: contractData.hash, chain: contractData.chain });
 
-  useEffect(() => {
-    //Before
-    setIsLoading(true);
-    setError();
-    // console.warn("(i) Offers() Loading Offers...");
-
-    //Load Offers
-    offersGetMoralis(contractData.hash, contractData.chain);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // console.error("Offers.jsx: tokens", tokens);
 
   /**
-   * Fetch all Contract's Offers via Moralis NFT API
+   * Transfer
+   * @param {*} nft 
+   * @param {*} amount 
+   * @param {*} receiver 
    */
-  async function offersGetMoralis(hash, chain) {
-    let apiKey = process?.env?.REACT_APP_MORALIS_API_KEY;
-    if (apiKey) {
-      if (hash && chain) {
-        let uri = `https://deep-index.moralis.io/api/v2/nft/${hash}?chain=${chain}&format=decimal`;
-        let headers = {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-        };
-        fetch(uri, { headers })
-          .then((response) => response.json())
-          .then((response) => {
-            console.warn(
-              "[TEST] Offers.offersGetMoralis() Moralis API Response:",
-              response,
-            );
-
-            if (!response?.result)
-              throw new Error(
-                "Moralis NFT For Contract Request Returned Invalid Data: " +
-                Json.stringify(response),
-              );
-
-            //Set NFTs
-            response?.result ? setNFTs(response.result) : setNFTs([]);
-            //Done Loading
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.error("Offers.offersGetMoralis() Moralis API Error:", err);
-            //Done Loading
-            setIsLoading(false);
-            //Has Error
-            setError(err);
-          });
-      } else
-        console.error("Offers.offersGetMoralis() Missing Parameters", {
-          hash,
-          chain,
-        });
-    } else
-      console.error(
-        "Offers.offersGetMoralis() Can't Run. API Key Missing in ENV",
-      );
-  } //offersGetMoralis()
-
-  /**
-   * Set Procedure
-   */
-  const setNFTs = (NFTs) => {
-    console.warn("[TEST] Offers.offersGetMoralis() Setting NFTs", NFTs);
-    for (let NFT of NFTs) {
-      if (NFT?.metadata) {
-        NFT.metadata = JSON.parse(NFT.metadata);
-        // metadata is a string type
-        NFT.image = resolveLink(NFT.metadata?.image);
-      }
-    }
-    setTokens(NFTs);
-  };
-
   async function transfer(nft, amount, receiver) {
     console.log(nft, amount, receiver);
     const options = {
@@ -153,7 +87,6 @@ function Offers(props) {
     setAmount(e.target.value);
   };
 
-  console.warn("[TEST] Offers() Rendering Tokens:", tokens);
   return (
     <div className="framed offer">
       <h1>Offers</h1>
