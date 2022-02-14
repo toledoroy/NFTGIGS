@@ -1,23 +1,17 @@
 /* eslint-disable prettier/prettier */
 // import { Result, Button } from 'antd';
 // import { Link } from "react-router-dom";
-// import { useOffers } from "hooks/useOffers";
-
-import React, { useState, useEffect, useContext } from "react";
-import { useMoralis, useNFTBalances } from "react-moralis";
-import { Card, Image, Tooltip, Modal, Input, Skeleton } from "antd";
-import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import React, { useContext } from "react";
+// import { useMoralis, useNFTBalances } from "react-moralis";
+// import { Card, Image, Tooltip, Modal, Input } from "antd";
+import { Skeleton } from "antd";
+// import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 // import { getExplorer } from "helpers/networks";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
-import { useIPFS } from "hooks/useIPFS";
-
+// import { useIPFS } from "hooks/useIPFS";
 import { useContractTokens } from "hooks/useContractTokens";
-
-// import AddressInput from "components/AddressInput";
 import OfferDisplaySingle from "components/NFT/OfferDisplaySingle";
 import { OfferContractContext } from "context/context";
-
-// const { Meta } = Card;
 
 const styles = {
   NFTs: {
@@ -37,10 +31,6 @@ const styles = {
  * Offers (All) Page
  */
 function Offers(props) {
-  // const { resolveLink } = useIPFS();
-  // const [tokens, setTokens] = useState([]);
-  // const [error, setError] = useState();
-  // const [isLoading, setIsLoading] = useState();
   const { contractData } = useContext(OfferContractContext);
   const { verifyMetadata } = useVerifyMetadata();
   const { tokens, isLoading } = useContractTokens({ address: contractData.hash, chain: contractData.chain });
@@ -62,9 +52,7 @@ function Offers(props) {
       contractAddress: nft?.token_address,
     };
 
-    if (options.type === "erc1155") {
-      options.amount = amount ?? nft.amount;
-    }
+    if (options.type === "erc1155") { options.amount = amount ?? nft.amount; }
 
     setIsPending(true);
 
@@ -72,8 +60,8 @@ function Offers(props) {
       const tx = await Moralis.transfer(options);
       console.log(tx);
       setIsPending(false);
-    } catch (e) {
-      alert(e.message);
+    } catch (err) {
+      alert(err.message);
       setIsPending(false);
     }
   }
