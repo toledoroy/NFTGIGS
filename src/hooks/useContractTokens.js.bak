@@ -21,7 +21,7 @@ export const useContractTokens = (props) => {
         //Load Tokens
         if (props.address && props.chain) getContractTokens(props.address, props.chain);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props?.address, props?.chain]);
+    }, [props.address, props.chain]);
 
     /**
      * Set Procedure
