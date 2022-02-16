@@ -2,7 +2,7 @@
 // import { Result, Button } from 'antd';
 // import { Link } from "react-router-dom";
 import React, { useContext } from "react";
-// import { useMoralis, useNFTBalances } from "react-moralis";
+import { useMoralis } from "react-moralis";
 // import { Card, Image, Tooltip, Modal, Input } from "antd";
 import { Skeleton } from "antd";
 // import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 // import { useIPFS } from "hooks/useIPFS";
 import { useContractTokens } from "hooks/useContractTokens";
 import OfferDisplaySingle from "components/NFT/OfferDisplaySingle";
+import MessageWrongNetwork from "components/Messages/MessageWrongNetwork";
 import { OfferContractContext } from "context/context";
 
 const styles = {
@@ -34,6 +35,7 @@ function Offers(props) {
   const { contractData } = useContext(OfferContractContext);
   const { verifyMetadata } = useVerifyMetadata();
   const { tokens, isLoading } = useContractTokens({ address: contractData.hash, chain: contractData.chain });
+  const { chainId } = useMoralis();
 
   // console.error("Offers.jsx: tokens", tokens);
 
@@ -77,6 +79,7 @@ function Offers(props) {
 
   return (
     <div className="framed offer">
+      {chainId !== "0x13881" && <MessageWrongNetwork />}
       <h1>Offers</h1>
       <div style={styles.NFTs}>
         <Skeleton loading={isLoading}>
