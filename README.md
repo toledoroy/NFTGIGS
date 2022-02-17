@@ -11,8 +11,8 @@ From there we can just use the data like conventional web2 application.
 
 
 
-Built for ETHGlobal Road to Web3 Hackathon
+### Built for ETHGlobal Road to Web3 Hackathon
 
 https://showcase.ethglobal.com/roadtoweb3/nft-gigs
 
-* This is an early POC and should not be used in production
+`This is an early POC and should not be used in production`
