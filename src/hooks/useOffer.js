@@ -23,8 +23,6 @@ export const useOffer = (props) => {
   const [credit, setCredit] = useState();
   const [creator, setCreator] = useState();
   const [isSeller, setIsSeller] = useState();
-  // const [statuses, seStatuses] = useState();
-  // const [isBuyer, setIsBuyer] = useState();
 
   useEffect(() => {
     console.warn("[TEST] useOffer() Fetching Offer on-chain data");
@@ -35,13 +33,14 @@ export const useOffer = (props) => {
    * Fetch Offer's onChain Data
    */
   const loadOfferData = async (token_id) => {
-    getPrice(token_id).then(res => setPrice(res));
-    getSupply(token_id).then(res => setStock(res));
-    getCredit(account, token_id).then(res => setCredit(res));
+    getPrice(token_id).then(res => setPrice(res)).catch(err => console.warn("useOffer() Error While Fetching Token's Price: ", { err, token_id }));
+    getSupply(token_id).then(res => setStock(res)).catch(err => console.warn("useOffer() Error While Fetching Token's Supply: ", { err, token_id }));
+    getCredit(account, token_id).then(res => setCredit(res)).catch(err => console.warn("useOffer() Error While Fetching Credit: ", { err, token_id, account }));
     getCreator(token_id).then(res => {
+      console.warn("[TEST] useOffer() Creator: ", res);
       setCreator(res.toLowerCase());
       setIsSeller(res.toLowerCase() === account);
-    });
+    }).catch(err => console.warn("useOffer() Error While Fetching Creator: ", { err, token_id }));
   };
 
   /**
@@ -253,27 +252,10 @@ export const useOffer = (props) => {
     });
   }
 
-  /**
-   * Get Order's Status
-   */
-  async function getStatus(token_id, order_id, name = false) {
-    const options = {
-      contractAddress: contractData.hash,
-      abi: contractData.abi,
-      functionName: "status",
-      params: { token_id, order_id },
-    };
-    return Moralis.executeFunction(options).then((response) => {
-      const statuseNames = ['cancelled', 'requested', 'delivered', 'closed'];
-      return name ? statuseNames[response] : response;
-    });
-  }
-
-
   return {
     sell, buy, order, deliver, approve, //Offer Actions
     saveJSONToIPFS, //General Functions
-    getPrice, getSupply, getCredit, getStatus, getCreator,  //Offer Getters
+    getPrice, getSupply, getCredit, getCreator,  //Offer Getters
     price, stock, credit, creator, isSeller, //Current Offer Parameters
   };
 };
