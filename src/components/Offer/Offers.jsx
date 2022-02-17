@@ -73,10 +73,6 @@ function Offers(props) {
     setVisibility(true);
   };
 
-  const handleChange = (e) => {
-    setAmount(e.target.value);
-  };
-
   return (
     <div className="framed offer">
       {chainId !== "0x13881" && <MessageWrongNetwork />}
@@ -103,7 +99,7 @@ function Offers(props) {
         {nftToSend && nftToSend.contract_type === "erc1155" && (
           <Input
             placeholder="amount to send"
-            onChange={(e) => handleChange(e)}
+            onChange={(e) => setAmount(e.target.value)}
           />
         )}
       </Modal>
