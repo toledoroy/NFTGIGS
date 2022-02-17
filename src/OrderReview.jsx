@@ -16,18 +16,13 @@ function OrderReview(props) {
     const {
         saveJSONToIPFS,
         deliver,
-        getPrice, getSupply, getCredit, getStatus, getCreator
-    } = useOffer();
+        getStatus,
+        isSeller, //price, stock, credit, creator, 
+    } = useOffer({ token_id });
 
     const [metadata, setMetadata] = useState();
     const [order, setOrder] = useState({});
-    //TODO: Make this into a hook
-    const [price, setPrice] = useState();
-    const [stock, setStock] = useState();
-    const [credit, setCredit] = useState();
-    const [creator, setCreator] = useState();
     const [status, setStatus] = useState();
-    const [isSeller, setIsSeller] = useState();
     const [isBuyer, setIsBuyer] = useState();
     useEffect(() => {
         if (isWeb3Enabled) loadOnChainData();
@@ -39,14 +34,7 @@ function OrderReview(props) {
             setIsBuyer(order.get('account') === account);
         });
         //Fetch onChain Data
-        getPrice(token_id).then(res => setPrice(res));
-        getSupply(token_id).then(res => setStock(res));
-        getCredit(account, token_id).then(res => setCredit(res));
         getStatus(token_id, order_id, true).then(res => setStatus(res));
-        getCreator(token_id).then(res => {
-            setCreator(res.toLowerCase());
-            setIsSeller(res.toLowerCase() === account)
-        });
     };
 
     return (

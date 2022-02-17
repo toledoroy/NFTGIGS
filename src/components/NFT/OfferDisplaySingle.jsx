@@ -29,27 +29,10 @@ function OfferDisplaySingle({ nft }) {
     const [buyVisible, setBuyVisible] = useState(false);
     const [isPending, setIsPending] = useState(false);
     // const [image, setImage] = useState(nft.image);
-    const { buy, getPrice, getSupply, getCredit } = useOffer();
-
-    const [price, setPrice] = useState();
-    const [stock, setStock] = useState();
-    const [credit, setCredit] = useState();
-    useEffect(() => {
-        loadOnChainData()
-    }, []);
-    const loadOnChainData = async () => {
-        //Fetch onChain Data
-        let price = await getPrice(nft.token_id);
-        setPrice(price);
-        // console.warn("[TEST] OfferDisplaySingle() Getting Price For Token:" + nft.token_id, { nft, price });
-        let supply = await getSupply(nft.token_id);
-        setStock(supply);
-        // console.warn("[TEST] OfferDisplaySingle() Getting supply For Token:" + nft.token_id, { nft, supply });   //TODO: Test This
-        let credit = await getCredit(account, nft.token_id);
-        setCredit(credit);
-        // console.warn("[TEST] OfferDisplaySingle() Getting credit For Token:" + nft.token_id + " is: " + credit, { account });
-    };
-
+    const {
+        buy,
+        price, stock, credit,
+    } = useOffer({ token_id: nft?.token_id });
 
     // if(nft.contract_type == 'ERC1155') console.warn("[DEV] OfferDisplaySingle() "+nft.contract_type, {nft});
 
@@ -96,7 +79,6 @@ function OfferDisplaySingle({ nft }) {
             <Card
                 size="small"
                 className="item NFT lightUp"
-                hoverable
                 key={nft.token_id}
                 style={{
                     width: "var(--cardWidth)",

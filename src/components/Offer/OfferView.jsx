@@ -19,32 +19,14 @@ function OfferView(props) {
   const { resolveLink } = useIPFS();
   const { Moralis, account, isInitialized } = useMoralis();
 
-  //TODO: Make this into a hook
-  const [price, setPrice] = useState();
-  const [stock, setStock] = useState();
-  const [credit, setCredit] = useState();
-  const [creator, setCreator] = useState();
-  const [statuses, seStatuses] = useState();
-  const [isSeller, setIsSeller] = useState();
-  const [isBuyer, setIsBuyer] = useState();
   const {
     order, buy,
-    getPrice, getSupply, getCredit, getStatus, getCreator
-  } = useOffer();
-  useEffect(() => {
-    if (isInitialized && account) loadOnChainData(token);
-  }, [token, isInitialized, account]);
-  const loadOnChainData = async (nft) => {
-    //Fetch onChain Data
+    getStatus,
+    price, stock, credit, creator, isSeller,
+  } = useOffer({ token_id });
 
-
-    getPrice(token_id).then(res => setPrice(res));
-    getSupply(token_id).then(res => setStock(res));
-    getCredit(account, token_id).then(res => setCredit(res));
-    getCreator(token_id).then(res => { setCreator(res.toLowerCase()); setIsSeller(res.toLowerCase() === account) });
-
-  };
-
+  // const [isBuyer, setIsBuyer] = useState();
+  const [statuses, seStatuses] = useState();
 
   useEffect(() => {
     if (token_id) loadOffer(token_id);

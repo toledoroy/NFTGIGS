@@ -12,9 +12,37 @@ import {
  * Hook: Interface for Offers Contract
  */
 export const useOffer = (props) => {
-  const { Moralis, chainId } = useMoralis();
+  const token_id = props?.token_id;
+  const { Moralis, isInitialized, account } = useMoralis();
   const contractProcessor = useWeb3ExecuteFunction();
   const { contractData } = useContext(OfferContractContext);
+
+  //Offer Data
+  const [price, setPrice] = useState();
+  const [stock, setStock] = useState();
+  const [credit, setCredit] = useState();
+  const [creator, setCreator] = useState();
+  const [isSeller, setIsSeller] = useState();
+  // const [statuses, seStatuses] = useState();
+  // const [isBuyer, setIsBuyer] = useState();
+
+  useEffect(() => {
+    console.warn("[TEST] useOffer() Fetching Offer on-chain data");
+    if (isInitialized && account) loadOfferData(token_id);
+  }, [token_id, isInitialized, account]);
+
+  /**
+   * Fetch Offer's onChain Data
+   */
+  const loadOfferData = async (token_id) => {
+    getPrice(token_id).then(res => setPrice(res));
+    getSupply(token_id).then(res => setStock(res));
+    getCredit(account, token_id).then(res => setCredit(res));
+    getCreator(token_id).then(res => {
+      setCreator(res.toLowerCase());
+      setIsSeller(res.toLowerCase() === account);
+    });
+  };
 
   /**
    * Save JSON File to IPFS
@@ -243,8 +271,9 @@ export const useOffer = (props) => {
 
 
   return {
-    sell, buy, order, deliver, approve,
-    saveJSONToIPFS,
-    getPrice, getSupply, getCredit, getStatus, getCreator,
+    sell, buy, order, deliver, approve, //Offer Actions
+    saveJSONToIPFS, //General Functions
+    getPrice, getSupply, getCredit, getStatus, getCreator,  //Offer Getters
+    price, stock, credit, creator, isSeller, //Current Offer Parameters
   };
 };

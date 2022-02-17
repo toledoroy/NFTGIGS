@@ -26,14 +26,15 @@ function Offer(props) {
     // const [metadata, setMetadata] = useState({});
     const [isSaving, setisSaving] = useState(false);
     const [files, setFiles] = useState({});
-    const { sell, saveJSONToIPFS, contractCall } = useOffer();
+    const {
+        sell, saveJSONToIPFS,
+    } = useOffer();
     const curPage = props?.match?.params?.action;
 
     const [form] = Form.useForm(); //Form Handle
     useEffect(() => {
         console.log("Offers Controller -- Loaded Page: " + curPage);
     });
-
 
     /**
      * Describe all Offer Stages

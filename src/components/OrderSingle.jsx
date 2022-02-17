@@ -17,20 +17,15 @@ function OrderSingle(props) {
     const {
         saveJSONToIPFS,
         deliver, approve,
-        getPrice, getSupply, getCredit, getStatus, getCreator
-    } = useOffer();
+        getStatus,
+        price, stock, credit, creator, isSeller
+    } = useOffer({ token_id });
 
     const [metadataNew, setMetadataNew] = useState();
     const [metadata, setMetadata] = useState();
     const [order, setOrder] = useState();
 
-    //TODO: Make this into a hook
-    const [price, setPrice] = useState();
-    const [stock, setStock] = useState();
-    const [credit, setCredit] = useState();
-    const [creator, setCreator] = useState();
     const [status, setStatus] = useState();
-    const [isSeller, setIsSeller] = useState();
     const [isBuyer, setIsBuyer] = useState();
     useEffect(() => {
         if (isWeb3Enabled) loadOnChainData();
@@ -44,21 +39,13 @@ function OrderSingle(props) {
             if (order.get('uri')) fetchMetadata(order.get('uri'));
         });
         //Fetch onChain Data
-        getPrice(token_id).then(res => setPrice(res));
-        getSupply(token_id).then(res => setStock(res));
-        getCredit(account, token_id).then(res => setCredit(res));
         getStatus(token_id, order_id, true).then(res => setStatus(res));
-        getCreator(token_id).then(res => {
-            setCreator(res.toLowerCase());
-            setIsSeller(res.toLowerCase() === account)
-        });
     };
     const fetchMetadata = async (uri) => {
         //Get Metadata
         fetch(resolveLink(uri))
             .then((res) => res.json())
             .then((result) => {
-
                 //Log
                 if (!result) console.error("OrderSingle.fetchMetadata() Failed to Fetch Metadata URI:", { uri, result },);
                 else console.warn("[FYI] OrderSingle.fetchMetadata() Metadata ", { uri, result },);
