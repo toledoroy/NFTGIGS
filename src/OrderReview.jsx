@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, Input, InputNumber } from "antd";
 // import { OfferContractContext } from "context/context";
 import { useOffer } from "hooks/useOffer";
+import { useOrder } from "hooks/useOrder";
 // import { useIPFS } from "hooks/useIPFS";
 import { useMoralis, useMoralisQuery } from "react-moralis";
 
@@ -16,26 +17,12 @@ function OrderReview(props) {
     const {
         saveJSONToIPFS,
         deliver,
-        getStatus,
+        // getStatus,
         isSeller, //price, stock, credit, creator, 
     } = useOffer({ token_id });
+    const { order, status, isBuyer, metadata } = useOrder({ token_id, order_id });
 
-    const [metadata, setMetadata] = useState();
-    const [order, setOrder] = useState({});
-    const [status, setStatus] = useState();
-    const [isBuyer, setIsBuyer] = useState();
-    useEffect(() => {
-        if (isWeb3Enabled) loadOnChainData();
-    }, [isWeb3Enabled, account, token_id, order_id]);
-    const loadOnChainData = async () => {
-        const query = new Moralis.Query("mumbaiOfferOrderd").equalTo("token_id", token_id).equalTo("order_id", order_id);
-        query.first().then(order => {
-            setOrder(order);
-            setIsBuyer(order.get('account') === account);
-        });
-        //Fetch onChain Data
-        getStatus(token_id, order_id, true).then(res => setStatus(res));
-    };
+    const [metadataNew, setMetadataNew] = useState();
 
     return (
         <div className="framed order">
@@ -47,12 +34,12 @@ function OrderReview(props) {
                     <Input.TextArea
                         placeholder={"Delivery Note"}
                         autoSize={{ minRows: 6, maxRows: 6 }}
-                        onChange={(evt) => setMetadata(evt.target.value)}
+                        onChange={(evt) => setMetadataNew(evt.target.value)}
                     />
                     <div>[Potential Image/File Upload]</div>
                     <Button default onClick={async () => {
                         //Save to IPFS & Register Delivery URI to the Contract
-                        let delivery_uri = await saveJSONToIPFS(metadata);
+                        let delivery_uri = await saveJSONToIPFS(metadataNew);
                         deliver(token_id, order_id, delivery_uri);
                     }} disabled={!isSeller}>Deliver</Button>
                 </div>

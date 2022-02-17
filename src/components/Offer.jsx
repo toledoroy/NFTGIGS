@@ -23,7 +23,6 @@ var _ = require("lodash");
  */
 function Offer(props) {
     const { isWeb3Enabled, isInitialized } = useMoralis();
-    // const [metadata, setMetadata] = useState({});
     const [isSaving, setisSaving] = useState(false);
     const [files, setFiles] = useState({});
     const {

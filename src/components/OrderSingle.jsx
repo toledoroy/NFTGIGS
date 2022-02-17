@@ -3,8 +3,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, Input, InputNumber, Form, Radio } from "antd";
 // import { OfferContractContext } from "context/context";
 import { useOffer } from "hooks/useOffer";
-import { useIPFS } from "hooks/useIPFS";
-import { useMoralis, useMoralisQuery } from "react-moralis";
+import { useOrder } from "hooks/useOrder";
+// import { useIPFS } from "hooks/useIPFS";
+import { useMoralis } from "react-moralis";
 
 
 /**
@@ -13,48 +14,15 @@ import { useMoralis, useMoralisQuery } from "react-moralis";
 function OrderSingle(props) {
     const { token_id, order_id } = props.match.params;
     const { Moralis, account, isInitialized, isWeb3Enabled } = useMoralis();
-    const { resolveLink } = useIPFS();
+    // const { resolveLink } = useIPFS();
     const {
         saveJSONToIPFS,
-        deliver, approve,
-        getStatus,
-        price, stock, credit, creator, isSeller
+        deliver, //approve,
+        price, isSeller, //stock, credit, creator
     } = useOffer({ token_id });
+    const { order, status, isBuyer, metadata } = useOrder({ token_id, order_id });
 
     const [metadataNew, setMetadataNew] = useState();
-    const [metadata, setMetadata] = useState();
-    const [order, setOrder] = useState();
-
-    const [status, setStatus] = useState();
-    const [isBuyer, setIsBuyer] = useState();
-    useEffect(() => {
-        if (isWeb3Enabled) loadOnChainData();
-    }, [isWeb3Enabled, account, token_id, order_id]);
-    const loadOnChainData = async () => {
-        const query = new Moralis.Query("mumbaiOfferOrderd").equalTo("token_id", token_id).equalTo("order_id", order_id);
-        query.first().then(order => {
-            console.warn("[DEV] OrderSingle: ", order?.attributes);
-            setOrder(order);
-            setIsBuyer(order.get('account') === account);
-            if (order.get('uri')) fetchMetadata(order.get('uri'));
-        });
-        //Fetch onChain Data
-        getStatus(token_id, order_id, true).then(res => setStatus(res));
-    };
-    const fetchMetadata = async (uri) => {
-        //Get Metadata
-        fetch(resolveLink(uri))
-            .then((res) => res.json())
-            .then((result) => {
-                //Log
-                if (!result) console.error("OrderSingle.fetchMetadata() Failed to Fetch Metadata URI:", { uri, result },);
-                else console.warn("[FYI] OrderSingle.fetchMetadata() Metadata ", { uri, result },);
-                setMetadata(result);
-            })
-            .catch((err) => {
-                console.error("OrderSingle.fetchMetadata() Error Caught:", { err, uri });
-            });
-    };
 
     /**
      * Submit Approval Form
@@ -69,13 +37,11 @@ function OrderSingle(props) {
 
             {order &&
                 <div className="order-info">
-
                     <div> Buyer: {order?.get('account')}</div>
                     <div> Price: {price}</div>
                     <div> URI: {order?.get('uri')}</div>
                 </div>
             }
-
 
             {(status === 'requested') && <>
                 {isSeller

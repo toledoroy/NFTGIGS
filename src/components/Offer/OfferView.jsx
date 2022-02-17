@@ -4,6 +4,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Input, Button, message } from "antd";
 import { OfferContractContext } from "context/context";
 import { useOffer } from "hooks/useOffer";
+import { useOrder } from "hooks/useOrder";
 import { useIPFS } from "hooks/useIPFS";
 import { useMoralis, useMoralisQuery } from "react-moralis";
 
@@ -21,17 +22,12 @@ function OfferView(props) {
 
   const {
     order, buy,
-    getStatus,
     price, stock, credit, creator, isSeller,
   } = useOffer({ token_id });
+  const { getStatus } = useOrder();
 
-  // const [isBuyer, setIsBuyer] = useState();
-  const [statuses, seStatuses] = useState();
+  const [statuses, seStatuses] = useState();  //Statuses by Order ID
 
-  useEffect(() => {
-    if (token_id) loadOffer(token_id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   useEffect(() => {
     if (token_id) {
       loadOffer(token_id);
@@ -40,7 +36,7 @@ function OfferView(props) {
   }, [token_id]);
 
 
-  const loadOffer = async (token_id) => {   //TODO: Replace this whole thing with something better when you got the time
+  const loadOffer = async (token_id) => {   //TODO: Replace this whole thing with something better when you got some time
     const hash = contractData.hash;
     const chain = contractData.chain;
     console.warn("(i) Offers() Loading Offer" + token_id);
@@ -119,7 +115,7 @@ function OfferView(props) {
 
   const loadStatuses = async () => {
     //Fetch Order Statuses
-    let statuses = {};
+    // let statuses = {};
     for (let order of evtOrder) {
       getStatus(order.get('token_id'), order.get('order_id'), true).then((status) => {
         seStatuses((prevState) => {
@@ -174,30 +170,29 @@ function OfferView(props) {
           <h3>My Orders</h3>
           <table>
             <tbody>
-              <tr>
-                <th>account</th>
-                <th>orderId</th>
-                <th>URI</th>
-                <th>Status</th>
-                <th>Link</th>
+              <tr key="head">
+                <th key="acc">account</th>
+                <th key="ord">orderId</th>
+                <th key="URI">URI</th>
+                <th key="Sta">Status</th>
+                <th key="Lin">Link</th>
               </tr>
               {evtOrderMy.map((evt) => {
                 return (
-                  <tr>
-                    <td>
+                  <tr key={evt.id}>
+                    <td key="acc">
                       {evt.get('account')}
                     </td>
-                    <td>
+                    <td key="order">
                       {'G' + evt.get('token_id') + 'G' + evt.get('order_id')}
                     </td>
-                    <td>
+                    <td key="uri">
                       {evt.get('uri')}
                     </td>
-
-                    <td>
+                    <td key="status">
                       {statuses?.[evt?.get('order_id')]}
                     </td>
-                    <td>
+                    <td key="link">
                       {(evt.get('account') === account)
                         ? <a href={"/order/" + token.token_id + '/' + evt.get('order_id')}>Order Page</a>
                         : <span>(for buyer only)</span>
@@ -228,15 +223,15 @@ function OfferView(props) {
             <h3>Pending Orders</h3>
             <table>
               <tbody>
-                <tr>
-                  <th>account</th>
-                  <th>orderId</th>
-                  <th>URI</th>
-                  <th>Status</th>
-                  <th>Link</th>
+                <tr key="head">
+                  <th key="acc">account</th>
+                  <th key="ord">orderId</th>
+                  <th key="URI">URI</th>
+                  <th key="Sta">Status</th>
+                  <th key="Lin">Link</th>
                 </tr>
                 {evtOrder.map((evt) => (
-                  <tr>
+                  <tr key={evt.id}>
                     <td>
                       {evt.get('account')}
                     </td>
@@ -246,7 +241,6 @@ function OfferView(props) {
                     <td>
                       {evt.get('uri')}
                     </td>
-
                     <td>
                       {statuses?.[evt?.get('order_id')]}
                     </td>
@@ -260,8 +254,6 @@ function OfferView(props) {
             </table>
           </div>
         }
-
-
 
       </div>
     </div>
