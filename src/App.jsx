@@ -94,7 +94,10 @@ const App = ({ isServerInfo }) => {
       <Layout style={{ height: "100vh", overflow: "auto" }}>
         <Router>
           <Header style={styles.header}>
-            <Logo />
+            {/* <Logo /> */}
+            <div className="logo" style={{ fontSize: '1.5em', fontWeight: '550' }}>
+              NFTGigs
+            </div>
             <MenuItems />
             <div style={styles.headerRight}>
               <Chains />
