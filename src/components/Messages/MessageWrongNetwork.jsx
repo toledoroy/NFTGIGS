@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 // import { Link } from "react-router-dom";
 import { Button, Col, Row } from "antd";
 // import { useIPFS } from "hooks/useIPFS";
-// import { useMoralis } from "react-moralis";
+import { useMoralis } from "react-moralis";
 import { useChain } from "react-moralis";
 
 
@@ -10,9 +10,9 @@ import { useChain } from "react-moralis";
  * Component: Wrong Network Message
  */
 function MessageWrongNetwork(props) {
-    // const { chainId } = useMoralis();
+    const { chainId } = useMoralis();
     const { switchNetwork } = useChain();
-
+    if (chainId == "0x13881") console.error("MessageWrongNetwork() Shouldn't Load This", chainId);
     return (
         <Row className="welcom_message container" style={{ margin: '10px 0 30px 0' }}>
             <Col xs={24} className="framed">
