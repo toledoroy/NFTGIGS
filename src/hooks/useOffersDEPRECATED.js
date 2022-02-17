@@ -78,8 +78,8 @@ export const useOffers = (props) => {
     //Polygon Offers
     fetch(
       "https://api.nftport.xyz/v0/nfts/" +
-        contractHash +
-        "?chain=polygon&include=metadata",
+      contractHash +
+      "?chain=polygon&include=metadata",
       {
         method: "GET",
         headers: {
@@ -122,10 +122,7 @@ export const useOffers = (props) => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.warn(
-          "[TEST] covalenthq Contract's NFTs:",
-          response?.data?.items,
-        );
+        console.warn("[TEST] covalenthq Contract's NFTs:", response?.data?.items);
         response?.data?.items ? setNFTs(response?.data?.items) : setNFTs([]);
         //Done Loading
         setIsLoading(false);
@@ -161,11 +158,7 @@ export const useOffers = (props) => {
               response,
             );
 
-            if (!response?.result)
-              throw new Error(
-                "Moralis NFT For Contract Request Returned Invalid Data: " +
-                  Json.stringify(response),
-              );
+            if (!response?.result) throw new Error("Moralis NFT For Contract Request Returned Invalid Data: " + Json.stringify(response),);
 
             //Set NFTs
             response?.result ? setNFTs(response.result) : setNFTs([]);
@@ -188,9 +181,7 @@ export const useOffers = (props) => {
           chain,
         });
     } else
-      console.error(
-        "useOffers.offersGetMoralis() Can't Run. API Key Missing in ENV",
-      );
+      console.error("useOffers.offersGetMoralis() Can't Run. API Key Missing in ENV");
   } //offersGetMoralis()
 
   /**
