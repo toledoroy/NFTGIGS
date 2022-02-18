@@ -8,7 +8,7 @@ import { useIPFS } from "hooks/useIPFS";
  */
 export const useContractTokens = (props) => {
     // const { Moralis, chainId } = useMoralis();
-    const { Moralis } = useMoralis();
+    const { Moralis, isInitialized } = useMoralis();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState();
     const [tokens, setTokens] = useState([]);
@@ -19,9 +19,9 @@ export const useContractTokens = (props) => {
         //Log
         console.warn("[TEST] useContractTokens() Run on Prop change", props);
         //Load Tokens
-        if (props.address && props.chain) getContractTokens(props.address, props.chain);
+        if (isInitialized && props.address && props.chain) getContractTokens(props.address, props.chain);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props?.address, props?.chain]);
+    }, [props?.address, props?.chain, isInitialized]);
 
     /**
      * Set Procedure

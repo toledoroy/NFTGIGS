@@ -37,7 +37,7 @@ function Offers(props) {
   const { tokens, isLoading } = useContractTokens({ address: contractData.hash, chain: contractData.chain });
   const { chainId } = useMoralis();
 
-  // console.error("Offers.jsx: tokens", tokens);
+  console.warn("[DEV] Offers.jsx: tokens", tokens);
 
   /**
    * Transfer
