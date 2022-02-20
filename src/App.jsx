@@ -26,7 +26,7 @@ import Text from "antd/lib/typography/Text";
 import Ramper from "components/Ramper";
 import Offer from "components/Offer";
 import OfferView from "components/Offer/OfferView";
-import Offers from "components/Offer/Offers";
+import Offers from "components/Offers/Offers";
 import OrderSingle from "components/OrderSingle";
 import MenuItems from "./components/MenuItems";
 import { OfferContractContext } from "context/context";

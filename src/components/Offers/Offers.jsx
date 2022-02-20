@@ -10,7 +10,7 @@ import { Skeleton } from "antd";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 // import { useIPFS } from "hooks/useIPFS";
 import { useContractTokens } from "hooks/useContractTokens";
-import OfferDisplaySingle from "components/NFT/OfferDisplaySingle";
+import OfferDisplaySingle from "components/Offer/OfferDisplaySingle";
 import MessageWrongNetwork from "components/Messages/MessageWrongNetwork";
 import { OfferContractContext } from "context/context";
 
