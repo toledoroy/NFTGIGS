@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { useLocation } from "react-router";
 import { Menu } from "antd";
 import { NavLink } from "react-router-dom";

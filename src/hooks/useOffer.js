@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { useEffect, useState, useContext } from "react";
 import { OfferContractContext } from "context/context";
 import {

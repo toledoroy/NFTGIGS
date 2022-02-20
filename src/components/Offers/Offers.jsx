@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 // import { Result, Button } from 'antd';
 // import { Link } from "react-router-dom";
 import React, { useContext } from "react";

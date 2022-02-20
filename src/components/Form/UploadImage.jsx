@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Upload, message, Image } from "antd";
