@@ -15,4 +15,6 @@ From there we can just use the data like conventional web2 application.
 
 https://showcase.ethglobal.com/roadtoweb3/nft-gigs
 
+[Presentation Deck](https://docs.google.com/presentation/d/1MxLqdrKoWskvt8CO3vaqwaMlzbKFHCky/edit?usp=sharing&ouid=116491726126440127531&rtpof=true&sd=true)
+
 `This is an early POC and should not be used in production`
